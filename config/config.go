@@ -10,4 +10,4 @@ var Iteung = fiber.Config{
 	AppName:       "Message Router",
 }
 
-var Stringmaria = "root:@tcp(127.0.0.1:3306)/matakuliah_api"
+var Stringmaria = "root:@tcp(127.0.0.1:3306)/transaksi_pembelian"

@@ -9,13 +9,13 @@ import (
 
 func Web(page *fiber.App) {
 	Mysqlconn := config.CreateMariaGormConnection(config.Stringmaria)
-	mtk := repository.NewMatakuliahTable(Mysqlconn)
-	Handle := controller.MatkulHandler{mtk}
+	trx := repository.NewTransaksiTable(Mysqlconn)
+	Handle := controller.TransaksiHandler{Trx: trx}
 
 	grp := page.Group("/mst")
 
-	grp.Get("/data", Handle.GetDataMatakuliah)
-	grp.Post("/insert", Handle.InsertDataMatakuliah)
-	grp.Put("/update", Handle.UpdateDataMatakuliah)
-	grp.Delete("/delete", Handle.DeleteDataMatakuliah)
+	grp.Get("/data", Handle.GetDataTransaksi)
+	grp.Post("/insert", Handle.InsertTransaksi)
+	grp.Put("/update", Handle.UpdateTransaksi)
+	grp.Delete("/delete", Handle.DeleteTransaksi)
 }
