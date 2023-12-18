@@ -16,3 +16,12 @@ type TransaksiPembelian struct {
 func (t *TransaksiPembelian) TableName() string {
 	return "transaksi_pembelian"
 }
+
+type Login struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func (t *Login) TableName() string {
+	return "login"
+}

@@ -81,5 +81,3 @@ func (a *TransaksiTable) DeleteTransaksi(ctx context.Context, kode int) (dest Tr
 
 	return
 }
-
-// More Info about skeleton github.com/rofinafiin

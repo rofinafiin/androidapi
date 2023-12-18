@@ -10,7 +10,9 @@ import (
 func Web(page *fiber.App) {
 	Mysqlconn := config.CreateMariaGormConnection(config.Stringmaria)
 	trx := repository.NewTransaksiTable(Mysqlconn)
+	log := repository.NewLogTable(Mysqlconn)
 	Handle := controller.TransaksiHandler{Trx: trx}
+	loginHandler := controller.LoginHandler{Trx: log}
 
 	grp := page.Group("/mst")
 
@@ -18,4 +20,8 @@ func Web(page *fiber.App) {
 	grp.Post("/insert", Handle.InsertTransaksi)
 	grp.Put("/update", Handle.UpdateTransaksi)
 	grp.Delete("/delete", Handle.DeleteTransaksi)
+
+	grplg := page.Group("/")
+	grplg.Post("register", loginHandler.Register)
+	grplg.Post("login", loginHandler.Login)
 }
