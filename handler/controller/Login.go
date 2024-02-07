@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/rofinafiin/androidapi/handler/models"
 	"github.com/rofinafiin/androidapi/handler/repository"
+	helper2 "github.com/rofinafiin/androidapi/helper"
 )
 
 type LoginHandler struct {
@@ -32,22 +33,46 @@ func (log *LoginHandler) Register(ctx *fiber.Ctx) (err error) {
 	return
 }
 
+func (log *LoginHandler) GetDataUser(ctx *fiber.Ctx) (err error) {
+	data, err := log.Trx.GetUser(ctx.Context())
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Gagal Register data")
+	}
+
+	err = helper.ReturnData[[]models.Login]{
+		Code:    fiber.StatusOK,
+		Success: true,
+		Status:  "Berhasil Registrasi",
+		Data:    data,
+	}.WriteResponseBody(ctx)
+	return
+}
+
 func (log *LoginHandler) Login(ctx *fiber.Ctx) (err error) {
 	req := new(models.Login)
 	if err = val.ParseAndValidatePlayGround(ctx.Body(), req); err != nil {
-		return err
+		return ctx.Status(fiber.StatusBadRequest).JSON(models.LoginResponse{
+			Token:   "-",
+			Message: err.Error(),
+			Status:  fiber.StatusBadRequest,
+		})
 	}
 
 	cihuy := log.Trx.Login(ctx.Context(), *req)
 	if !cihuy {
-		return fiber.NewError(fiber.StatusBadRequest, "Password salah")
+		return ctx.Status(fiber.StatusBadRequest).JSON(models.LoginResponse{
+			Token:   "-",
+			Message: "password salah",
+			Status:  fiber.StatusBadRequest,
+		})
 	}
 
-	err = helper.ReturnData[*models.Login]{
-		Code:    fiber.StatusOK,
-		Success: cihuy,
-		Status:  "Berhasil Login",
-		Data:    req,
-	}.WriteResponseBody(ctx)
+	randstring := helper2.GenerateRandomString(15)
+
+	err = ctx.Status(fiber.StatusOK).JSON(models.LoginResponse{
+		Token:   randstring,
+		Message: "Behasil Login",
+		Status:  fiber.StatusOK,
+	})
 	return
 }

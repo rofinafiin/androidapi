@@ -2,25 +2,12 @@ package repository
 
 import (
 	"context"
+	"github.com/rofinafiin/androidapi/handler/models"
 	"gorm.io/gorm"
 )
 
 type RequestTrx struct {
 	NomorFaktur int `gorm:"column:Nomor Faktur" json:"nomor-faktur"`
-}
-
-// Model Table
-type TransaksiPembelian struct {
-	NomorFaktur int    `gorm:"column:Nomor Faktur" json:"nomor-faktur"`
-	KodeBarang  string `gorm:"column:Kode Barang" json:"kode-barang"`
-	NamaBarang  string `gorm:"column:Nama Barang" json:"nama-barang"`
-	Satuan      int    `gorm:"column:Satuan" json:"satuan"`
-	HargaSatuan int    `gorm:"column:Harga Satuan" json:"harga-satuan"`
-	Subtotal    int    `gorm:"column:Subtotal" json:"subtotal"`
-}
-
-func (t *TransaksiPembelian) TableName() string {
-	return "transaksi_pembelian"
 }
 
 type TransaksiTable struct {
@@ -34,7 +21,7 @@ func NewTransaksiTable(db *gorm.DB) *TransaksiTable {
 }
 
 // QUERY READ
-func (a *TransaksiTable) GetTransaksiData(ctx context.Context) (dest []TransaksiPembelian, err error) {
+func (a *TransaksiTable) GetTransaksiData(ctx context.Context) (dest []models.TransaksiPembelian, err error) {
 	err = a.grm.
 		WithContext(ctx).
 		Find(&dest).
@@ -43,17 +30,17 @@ func (a *TransaksiTable) GetTransaksiData(ctx context.Context) (dest []Transaksi
 }
 
 // QUERY GET BY ID
-func (a *TransaksiTable) GetTrxbyNomorFaktur(ctx context.Context, kode int) (dest TransaksiPembelian, err error) {
+func (a *TransaksiTable) GetTrxbyNomorFaktur(ctx context.Context, kode int) (dest models.TransaksiPembelian, err error) {
 	err = a.grm.
 		WithContext(ctx).
-		Where("Nomor Faktur = ?", kode).
+		Where("nomorfaktur = ?", kode).
 		First(&dest).
 		Error
 	return
 }
 
 // QUERY INSERT
-func (a *TransaksiTable) InsertTransaksi(ctx context.Context, val *TransaksiPembelian) (err error) {
+func (a *TransaksiTable) InsertTransaksi(ctx context.Context, val *models.TransaksiPembelian) (err error) {
 	err = a.grm.
 		WithContext(ctx).
 		Create(&val).
@@ -62,21 +49,29 @@ func (a *TransaksiTable) InsertTransaksi(ctx context.Context, val *TransaksiPemb
 }
 
 // QUERY UPDATE
-func (a *TransaksiTable) UpdateTransaksi(ctx context.Context, val *TransaksiPembelian) (err error) {
+func (a *TransaksiTable) UpdateTransaksi(ctx context.Context, val *models.TransaksiPembelian) (err error) {
 	err = a.grm.
 		WithContext(ctx).
-		Where("'Nomor Faktur' = ?", val.NomorFaktur).
+		Where("nomorfaktur = ?", val.NomorFaktur).
 		Updates(&val).
 		Error
 	return
 }
 
 // QUERY DELETE
-func (a *TransaksiTable) DeleteTransaksi(ctx context.Context, kode int) (dest TransaksiPembelian, err error) {
+func (a *TransaksiTable) DeleteTransaksi(ctx context.Context, kode string) (dest models.TransaksiPembelian, err error) {
 	err = a.grm.
 		WithContext(ctx).
-		Where("'Nomor Faktur' = ?", kode).
+		Where("nomorfaktur = ?", kode).
 		Delete(&dest).
+		Error
+
+	return
+}
+
+func (a *TransaksiTable) GetByNoFak(ctx context.Context, nofaktur string) (dest models.TransaksiPembelian, err error) {
+	err = a.grm.WithContext(ctx).Where("nomorfaktur = ?", nofaktur).
+		First(&dest).
 		Error
 
 	return

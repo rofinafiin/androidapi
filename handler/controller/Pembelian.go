@@ -3,6 +3,7 @@ package controller
 import (
 	fibhelp "github.com/aiteung/athelper/fiber"
 	"github.com/gofiber/fiber/v2"
+	"github.com/rofinafiin/androidapi/handler/models"
 	"github.com/rofinafiin/androidapi/handler/repository"
 	"strconv"
 )
@@ -20,7 +21,7 @@ func (trx *TransaksiHandler) GetDataTransaksi(ctx *fiber.Ctx) (err error) {
 		return fiber.NewError(fiber.StatusNotFound, "Data Not Found "+err.Error())
 	}
 
-	err = fibhelp.ReturnData[[]repository.TransaksiPembelian]{
+	err = fibhelp.ReturnData[[]models.TransaksiPembelian]{
 		fiber.StatusOK,
 		true,
 		"Data berhasil diambil",
@@ -32,7 +33,7 @@ func (trx *TransaksiHandler) GetDataTransaksi(ctx *fiber.Ctx) (err error) {
 
 // Create Data
 func (trx *TransaksiHandler) InsertTransaksi(ctx *fiber.Ctx) (err error) {
-	req := new(repository.TransaksiPembelian)
+	req := new(models.TransaksiPembelian)
 	err = ctx.BodyParser(req)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Cannot retrieve the body")
@@ -52,7 +53,7 @@ func (trx *TransaksiHandler) InsertTransaksi(ctx *fiber.Ctx) (err error) {
 
 // Update Data
 func (trx *TransaksiHandler) UpdateTransaksi(ctx *fiber.Ctx) (err error) {
-	req := new(repository.TransaksiPembelian)
+	req := new(models.TransaksiPembelian)
 	err = ctx.BodyParser(req)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Cannot retrieve the body")
@@ -72,19 +73,30 @@ func (trx *TransaksiHandler) UpdateTransaksi(ctx *fiber.Ctx) (err error) {
 
 // Delete Data
 func (trx *TransaksiHandler) DeleteTransaksi(ctx *fiber.Ctx) (err error) {
-	req := new(repository.RequestTrx)
-	err = ctx.BodyParser(req)
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "Cannot retrieve the body")
-	}
-	deleted, err := trx.Trx.DeleteTransaksi(ctx.Context(), req.NomorFaktur)
+	nofak := ctx.Params("nomorfaktur", "")
+	deleted, err := trx.Trx.DeleteTransaksi(ctx.Context(), nofak)
 	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, "Gagal Hapus data "+err.Error())
 	}
-	err = fibhelp.ReturnData[repository.TransaksiPembelian]{
+	err = fibhelp.ReturnData[string]{
 		fiber.StatusOK,
 		true,
 		"Data berhasil Dihapus",
+		deleted.NamaBarang,
+	}.WriteResponseBody(ctx)
+	return
+}
+
+func (trx *TransaksiHandler) GetById(ctx *fiber.Ctx) (err error) {
+	nofak := ctx.Params("nomorfaktur", "")
+	deleted, err := trx.Trx.GetByNoFak(ctx.Context(), nofak)
+	if err != nil {
+		return fiber.NewError(fiber.StatusNotFound, "Gagal Get data "+err.Error())
+	}
+	err = fibhelp.ReturnData[models.TransaksiPembelian]{
+		fiber.StatusOK,
+		true,
+		"Data berhasil Diambil",
 		deleted,
 	}.WriteResponseBody(ctx)
 	return

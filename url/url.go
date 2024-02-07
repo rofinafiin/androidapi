@@ -18,10 +18,12 @@ func Web(page *fiber.App) {
 
 	grp.Get("/data", Handle.GetDataTransaksi)
 	grp.Post("/insert", Handle.InsertTransaksi)
+	grp.Get("/byid/:nomorfaktur", Handle.GetById)
 	grp.Put("/update", Handle.UpdateTransaksi)
-	grp.Delete("/delete", Handle.DeleteTransaksi)
+	grp.Delete("/delete/:nomorfaktur", Handle.DeleteTransaksi)
 
 	grplg := page.Group("/")
 	grplg.Post("register", loginHandler.Register)
 	grplg.Post("login", loginHandler.Login)
+	grplg.Get("data", loginHandler.GetDataUser)
 }

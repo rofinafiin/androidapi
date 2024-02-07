@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/rofinafiin/androidapi/handler/models"
 	"gorm.io/gorm"
 )
@@ -18,6 +19,11 @@ func NewLogTable(db *gorm.DB) *LoginTable {
 
 func (a *LoginTable) Register(ctx context.Context, data models.Login) (err error) {
 	err = a.grm.WithContext(ctx).Create(&data).Error
+	return
+}
+
+func (a *LoginTable) GetUser(ctx context.Context) (dest []models.Login, err error) {
+	err = a.grm.WithContext(ctx).Find(&dest).Error
 	return
 }
 

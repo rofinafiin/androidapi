@@ -5,12 +5,12 @@ type RequestTrx struct {
 }
 
 type TransaksiPembelian struct {
-	NomorFaktur int    `gorm:"column:Nomor Faktur" json:"nomor-faktur"`
-	KodeBarang  string `gorm:"column:Kode Barang" json:"kode-barang"`
-	NamaBarang  string `gorm:"column:Nama Barang" json:"nama-barang"`
-	Satuan      int    `gorm:"column:Satuan" json:"satuan"`
-	HargaSatuan int    `gorm:"column:Harga Satuan" json:"harga-satuan"`
-	Subtotal    int    `gorm:"column:Subtotal" json:"subtotal"`
+	NomorFaktur int    `gorm:"column:nomorfaktur" json:"nomor-faktur"`
+	KodeBarang  string `gorm:"column:kodebarang" json:"kode-barang"`
+	NamaBarang  string `gorm:"column:namabarang" json:"nama-barang"`
+	Satuan      int    `gorm:"column:satuan" json:"satuan"`
+	HargaSatuan int    `gorm:"column:hargasatuan" json:"harga-satuan"`
+	Subtotal    int    `gorm:"column:subtotal" json:"subtotal"`
 }
 
 func (t *TransaksiPembelian) TableName() string {
@@ -24,4 +24,10 @@ type Login struct {
 
 func (t *Login) TableName() string {
 	return "login"
+}
+
+type LoginResponse struct {
+	Token   string `json:"token"`
+	Message string `json:"message"`
+	Status  int    `json:"status"`
 }
